@@ -9,6 +9,9 @@ import (
 	"sync"
 )
 
+// URLCounter counts a string inside the HTTP bodies, which it get from the URLs
+// passed to its Count method. It implements ConcurrentAccumulatingCounter.
+// It have a cap of max concurrent jobs running.
 type URLCounter struct {
 	searchString string
 	counted      int
@@ -17,12 +20,16 @@ type URLCounter struct {
 	sync.RWMutex
 }
 
+// NewURLCounter is just a factory function for URLCounter. You need to
+// pass a string you want to count and max concurrent jobs to run.
 func NewURLCounter(search string, maxJobs int) *URLCounter {
 	ch := make(chan bool, maxJobs)
 
 	return &URLCounter{searchString: search, maxJobs: ch}
 }
 
+// Count invokes a http.Get on each passed URL and counts the string in the
+// body. It blocks until there will be a free job.
 func (counter *URLCounter) Count(line string) {
 	if len(line) == 0 {
 		return
@@ -73,12 +80,14 @@ func (counter *URLCounter) addCounted(n int) {
 	counter.counted += n
 }
 
+// Counted returns accumulator value.
 func (counter *URLCounter) Counted() int {
 	counter.RLock()
 	defer counter.RUnlock()
 	return counter.counted
 }
 
+// Wait waits for all job workers to complete.
 func (counter *URLCounter) Wait() {
 	counter.wg.Wait()
 }

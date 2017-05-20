@@ -8,9 +8,10 @@ import (
 )
 
 func TestURLCounter(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handlerFunc := func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "123666123")
-	}))
+	}
+	server := httptest.NewServer(http.HandlerFunc(handlerFunc))
 	defer server.Close()
 
 	searchString := "123"
@@ -35,6 +36,6 @@ func TestNewURLCounter(t *testing.T) {
 	}
 
 	if got := cap(counter.maxJobs); got != maxJob {
-		t.Errorf("Expected %d, but got %d", expected, got)
+		t.Errorf("Expected %d, but got %d", maxJob, got)
 	}
 }
