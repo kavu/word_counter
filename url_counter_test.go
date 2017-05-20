@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestStringCounter(t *testing.T) {
+func TestURLCounter(t *testing.T) {
 	searchString := "123"
 	examples := []struct {
 		line     string
@@ -15,13 +15,14 @@ func TestStringCounter(t *testing.T) {
 	}
 	expectedTotal := 6
 
-	cntr := NewStringCounter(searchString)
+	counter := NewURLCounter(searchString)
 
 	for _, ex := range examples {
-		cntr.Count(ex.line)
+		counter.Count(ex.line)
 	}
+	counter.Wait()
 
-	if cntr.Counted() != expectedTotal {
-		t.Errorf("Expected %d, but got %d", expectedTotal, cntr.Counted())
+	if counter.Counted() != expectedTotal {
+		t.Errorf("Expected %d, but got %d", expectedTotal, counter.Counted())
 	}
 }

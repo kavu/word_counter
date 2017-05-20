@@ -8,10 +8,10 @@ import (
 type Processor struct {
 	MaxJobs int
 	Source  io.Reader
-	Counter AccumulatingCounter
+	Counter ConcurrentAccumulatingCounter
 }
 
-func NewProcessor(max int, ior io.Reader, cntr AccumulatingCounter) *Processor {
+func NewProcessor(max int, ior io.Reader, cntr ConcurrentAccumulatingCounter) *Processor {
 	return &Processor{MaxJobs: max, Source: ior, Counter: cntr}
 }
 
@@ -27,4 +27,8 @@ func (processor *Processor) Start() {
 
 		processor.Counter.Count(line)
 	}
+}
+
+func (processor *Processor) Wait() {
+	processor.Counter.Wait()
 }

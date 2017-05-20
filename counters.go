@@ -1,12 +1,13 @@
 package main
 
-type AccumulatingCounter interface {
-	Counter
+type ConcurrentAccumulatingCounter interface {
+	Wait()
 
-	Counted() int
-	addCounted(int)
+	AccumulatingCounter
 }
 
-type Counter interface {
-	Count(line string) int
+type AccumulatingCounter interface {
+	Count(line string)
+	Counted() int
+	addCounted(int)
 }

@@ -11,16 +11,14 @@ func NewStringCounter(search string) *StringCounter {
 	return &StringCounter{searchString: search}
 }
 
-func (counter *StringCounter) Count(line string) int {
+func (counter *StringCounter) Count(line string) {
 	if len(line) == 0 {
-		return 0
+		return
 	}
 
 	n := strings.Count(line, counter.searchString)
 
 	counter.addCounted(n)
-
-	return n
 }
 
 func (counter *StringCounter) Counted() int {
@@ -29,4 +27,7 @@ func (counter *StringCounter) Counted() int {
 
 func (counter *StringCounter) addCounted(n int) {
 	counter.counted += n
+}
+
+func (counter *StringCounter) Wait() {
 }
