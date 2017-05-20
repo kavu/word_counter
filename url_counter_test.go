@@ -24,3 +24,12 @@ func TestURLCounter(t *testing.T) {
 		t.Errorf("Expected %d, but got %d", expectedTotal, counter.Counted())
 	}
 }
+
+func TestNewURLCounter(t *testing.T) {
+	expected := "123"
+	counter := NewURLCounter(expected)
+
+	if got := counter.searchString; got != expected {
+		t.Errorf("Expected %s, but got %s", expected, got)
+	}
+}

@@ -1,9 +1,8 @@
 package main
 
 type ConcurrentAccumulatingCounter interface {
-	Wait()
-
 	AccumulatingCounter
+	Wait()
 }
 
 type AccumulatingCounter interface {

@@ -25,3 +25,12 @@ func TestStringCounter(t *testing.T) {
 		t.Errorf("Expected %d, but got %d", expectedTotal, cntr.Counted())
 	}
 }
+
+func TestNewStringCounter(t *testing.T) {
+	expected := "123"
+	counter := NewStringCounter(expected)
+
+	if got := counter.searchString; got != expected {
+		t.Errorf("Expected %s, but got %s", expected, got)
+	}
+}
