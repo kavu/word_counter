@@ -22,10 +22,10 @@ func init() {
 func main() {
 	flag.Parse()
 
-	cntr := NewStringCounter(searchString)
-	proc := NewProcessor(maxProcessors, source, cntr)
+	counter := NewStringCounter(searchString)
+	processor := NewProcessor(maxProcessors, source, counter)
 
-	proc.Start()
+	processor.Start()
 
-	log.Println(proc.GetResult())
+	log.Println(processor.GetResult())
 }
