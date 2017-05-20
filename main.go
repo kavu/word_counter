@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"io"
-	"log"
 	"os"
 )
 
@@ -27,6 +26,4 @@ func main() {
 
 	processor.Start()
 	processor.Wait()
-
-	log.Println(processor.GetResult())
 }

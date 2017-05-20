@@ -1,20 +1,24 @@
 package main
 
 import (
-	"strings"
+	"bytes"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 	"sync"
 )
 
 type URLCounter struct {
 	searchString string
 	counted      int
-	maxJobsChan  chan bool // FIXME: unused
+	maxJobsChan  chan bool
 	wg           sync.WaitGroup
 	sync.RWMutex
 }
 
 func NewURLCounter(search string) *URLCounter {
-	ch := make(chan bool, 5) // FIXME: unused, move from processor
+	ch := make(chan bool, 2) // FIXME: move from processor
 
 	return &URLCounter{searchString: search, maxJobsChan: ch}
 }
@@ -24,27 +28,55 @@ func (counter *URLCounter) Count(line string) {
 		return
 	}
 
+	counter.maxJobsChan <- true
 	counter.wg.Add(1)
 	go counter.countInHTTPResponse(line)
 }
 
-func (counter *URLCounter) countInHTTPResponse(url string) {
-	n := strings.Count(url, counter.searchString)
+func (counter *URLCounter) countInHTTPResponse(line string) {
+	defer counter.jobDone()
+
+	_, err := url.Parse(line)
+	if err != nil {
+		// Not a valid URL, skipping
+		return
+	}
+
+	response, err := http.Get(line)
+	if err != nil {
+		// Something went wrong, skipping
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		// Something went wrong, skipping
+		return
+	}
+
+	n := bytes.Count(body, []byte(counter.searchString))
+
+	log.Printf("Count for %s: %d\n", line, n)
 
 	counter.addCounted(n)
-	counter.wg.Done()
 }
 
-func (counter *URLCounter) Counted() int {
-	counter.RLock()
-	defer counter.RUnlock()
-	return counter.counted
+func (counter *URLCounter) jobDone() {
+	<-counter.maxJobsChan
+	counter.wg.Done()
 }
 
 func (counter *URLCounter) addCounted(n int) {
 	counter.Lock()
 	defer counter.Unlock()
 	counter.counted += n
+}
+
+func (counter *URLCounter) Counted() int {
+	counter.RLock()
+	defer counter.RUnlock()
+	return counter.counted
 }
 
 func (counter *URLCounter) Wait() {

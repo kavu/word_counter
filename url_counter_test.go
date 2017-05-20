@@ -1,25 +1,23 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
 func TestURLCounter(t *testing.T) {
-	searchString := "123"
-	examples := []struct {
-		line     string
-		expected int
-	}{
-		{"123", 1},
-		{"1236123", 2},
-		{"1236123\n123", 3},
-		{"", 0},
-	}
-	expectedTotal := 6
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "123666123")
+	}))
+	defer server.Close()
 
+	searchString := "123"
+	expectedTotal := 2
 	counter := NewURLCounter(searchString)
 
-	for _, ex := range examples {
-		counter.Count(ex.line)
-	}
+	counter.Count(server.URL)
 	counter.Wait()
 
 	if counter.Counted() != expectedTotal {
