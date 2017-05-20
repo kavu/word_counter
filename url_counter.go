@@ -12,15 +12,15 @@ import (
 type URLCounter struct {
 	searchString string
 	counted      int
-	maxJobsChan  chan bool
+	maxJobs      chan bool
 	wg           sync.WaitGroup
 	sync.RWMutex
 }
 
-func NewURLCounter(search string) *URLCounter {
-	ch := make(chan bool, 2) // FIXME: move from processor
+func NewURLCounter(search string, maxJobs int) *URLCounter {
+	ch := make(chan bool, maxJobs)
 
-	return &URLCounter{searchString: search, maxJobsChan: ch}
+	return &URLCounter{searchString: search, maxJobs: ch}
 }
 
 func (counter *URLCounter) Count(line string) {
@@ -28,7 +28,7 @@ func (counter *URLCounter) Count(line string) {
 		return
 	}
 
-	counter.maxJobsChan <- true
+	counter.maxJobs <- true
 	counter.wg.Add(1)
 	go counter.countInHTTPResponse(line)
 }
@@ -63,7 +63,7 @@ func (counter *URLCounter) countInHTTPResponse(line string) {
 }
 
 func (counter *URLCounter) jobDone() {
-	<-counter.maxJobsChan
+	<-counter.maxJobs
 	counter.wg.Done()
 }
 

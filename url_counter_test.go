@@ -15,7 +15,7 @@ func TestURLCounter(t *testing.T) {
 
 	searchString := "123"
 	expectedTotal := 2
-	counter := NewURLCounter(searchString)
+	counter := NewURLCounter(searchString, 10)
 
 	counter.Count(server.URL)
 	counter.Wait()
@@ -27,9 +27,14 @@ func TestURLCounter(t *testing.T) {
 
 func TestNewURLCounter(t *testing.T) {
 	expected := "123"
-	counter := NewURLCounter(expected)
+	maxJob := 5
+	counter := NewURLCounter(expected, maxJob)
 
 	if got := counter.searchString; got != expected {
 		t.Errorf("Expected %s, but got %s", expected, got)
+	}
+
+	if got := cap(counter.maxJobs); got != maxJob {
+		t.Errorf("Expected %d, but got %d", expected, got)
 	}
 }

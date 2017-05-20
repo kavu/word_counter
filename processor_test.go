@@ -11,7 +11,7 @@ func TestProcessor(t *testing.T) {
 	source := strings.NewReader("123asd\n\n123\nzzsd\123x123\n666\n\n\n444\n12")
 	expected := 3
 
-	proc := NewProcessor(1, source, cntr)
+	proc := NewProcessor(source, cntr)
 
 	proc.Start()
 
@@ -24,11 +24,7 @@ func TestNewProcessor(t *testing.T) {
 	cntr := NewStringCounter("123")
 	source := os.Stdin
 
-	processor := NewProcessor(1, source, cntr)
-
-	if got := processor.MaxJobs; got != 1 {
-		t.Errorf("Expected %d, but got %d", 1, got)
-	}
+	processor := NewProcessor(source, cntr)
 
 	if got := processor.Counter.(*StringCounter).searchString; got != "123" {
 		t.Errorf("Expected %s, but got %s", "123", got)

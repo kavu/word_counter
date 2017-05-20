@@ -6,13 +6,12 @@ import (
 )
 
 type Processor struct {
-	MaxJobs int
 	Source  io.Reader
 	Counter ConcurrentAccumulatingCounter
 }
 
-func NewProcessor(max int, ior io.Reader, cntr ConcurrentAccumulatingCounter) *Processor {
-	return &Processor{MaxJobs: max, Source: ior, Counter: cntr}
+func NewProcessor(ior io.Reader, cntr ConcurrentAccumulatingCounter) *Processor {
+	return &Processor{Source: ior, Counter: cntr}
 }
 
 func (processor *Processor) GetResult() int {
