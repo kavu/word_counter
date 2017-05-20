@@ -1,16 +1,18 @@
-package main
+package processor
 
 import (
 	"bufio"
 	"io"
+
+	"github.com/kavu/word_counter/counters"
 )
 
 type Processor struct {
 	Source  io.Reader
-	Counter ConcurrentAccumulatingCounter
+	Counter counters.ConcurrentAccumulatingCounter
 }
 
-func NewProcessor(ior io.Reader, cntr ConcurrentAccumulatingCounter) *Processor {
+func NewProcessor(ior io.Reader, cntr counters.ConcurrentAccumulatingCounter) *Processor {
 	return &Processor{Source: ior, Counter: cntr}
 }
 

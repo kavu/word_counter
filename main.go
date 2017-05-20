@@ -4,6 +4,9 @@ import (
 	"flag"
 	"io"
 	"os"
+
+	"github.com/kavu/word_counter/counters"
+	"github.com/kavu/word_counter/processor"
 )
 
 var (
@@ -21,8 +24,8 @@ func init() {
 func main() {
 	flag.Parse()
 
-	counter := NewURLCounter(searchString, maxJobs)
-	processor := NewProcessor(source, counter)
+	counter := counters.NewURLCounter(searchString, maxJobs)
+	processor := processor.NewProcessor(source, counter)
 
 	processor.Start()
 	processor.Wait()

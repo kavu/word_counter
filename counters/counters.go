@@ -1,4 +1,4 @@
-package main
+package counters
 
 type ConcurrentAccumulatingCounter interface {
 	AccumulatingCounter
